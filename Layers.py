@@ -123,3 +123,21 @@ class SoftmaxLossLayer:
         ## 된다. 따라서 하나의 데이터의 영향을 알고 싶다면, 즉 dx는 (역전파) / batch_size가 되는 것이다.
         
         return dx
+    
+    ##=========================class DropoutLayer========================##
+    
+class DropoutLayer:
+    def __init__(self, dropout_ratio=0.5):
+        self.dropout_ratio = dropout_ratio
+        self.mask = None
+        
+    def forward(self, x, train_flg=True):
+        if train_flg:
+            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+            return x * self.mask
+        
+        else:
+            return x * (1.0 - self.dropout_ratio)
+    
+    def backward(self, dout):
+        return dout * self.mask
